@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 
 const cateringRoutes = [
   "/private-catering",
@@ -22,6 +21,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cateringOpen, setCateringOpen] = useState(false);
+  const [privateOpen, setPrivateOpen] = useState(false);
+  const [corporateOpen, setCorporateOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -33,6 +34,8 @@ export default function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setCateringOpen(false);
+    setPrivateOpen(false);
+    setCorporateOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -47,34 +50,18 @@ export default function Navbar() {
 
   return (
     <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: "0 auto",
-          padding: "0 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: 80,
-        }}
-      >
-        <Link href="/" style={{ flexShrink: 0 }}>
+      <div className="nav-inner">
+        {/* Logo */}
+        <Link href="/" className="nav-logo">
           <img
             src="https://rickyrestaurants.com/wp-content/uploads/2024/05/rickylogo-1024x230.png"
             alt="Ricky's Restaurant"
-            style={{ height: 44, width: "auto" }}
+            style={{ height: 40, width: "auto" }}
           />
         </Link>
-        <ul
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 36,
-            listStyle: "none",
-            margin: 0,
-          }}
-          className="hidden lg:flex"
-        >
+
+        {/* Desktop Nav Links */}
+        <ul className="nav-links">
           <li>
             <Link
               href="/"
@@ -115,7 +102,6 @@ export default function Navbar() {
               </div>
             </div>
           </li>
-
           <li className="has-dd">
             <span
               className={`nav-link ${isCateringActive ? "nav-link--active" : ""}`}
@@ -233,7 +219,6 @@ export default function Navbar() {
               </div>
             </div>
           </li>
-
           <li>
             <Link
               href="/contact-us"
@@ -243,24 +228,21 @@ export default function Navbar() {
             </Link>
           </li>
         </ul>
+
+        {/* Desktop Reservation Button */}
         <Link
           href="/contact-us"
-          className="hidden lg:block btn btn--gold"
+          className="btn btn--gold nav-reserve-btn"
           style={{ padding: "10px 28px", fontSize: 11 }}
         >
           Reservation
         </Link>
+
+        {/* Hamburger — mobile only */}
         <button
-          style={{
-            background: "none",
-            border: "none",
-            color: "#fff",
-            cursor: "pointer",
-            padding: 4,
-          }}
+          className="nav-hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
-          className="lg:hidden"
         >
           {menuOpen ? (
             <svg
@@ -283,99 +265,94 @@ export default function Navbar() {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           )}
         </button>
       </div>
-      {menuOpen && (
-        <div
-          style={{
-            background: "#0d0d0d",
-            borderTop: "1px solid #1e1e1e",
-            maxHeight: "calc(100vh - 80px)",
-            overflowY: "auto",
-          }}
-        >
-          {[
-            { l: "Home", h: "/" },
-            { l: "About Us", h: "/about-us" },
-            { l: "Menu", h: "/menu" },
-          ].map((n) => (
-            <Link
-              key={n.h}
-              href={n.h}
-              style={{
-                display: "block",
-                padding: "15px 24px",
-                color: isActive(n.h) ? "#c8a96e" : "#fff",
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: 2,
-                textTransform: "uppercase",
-                borderBottom: "1px solid #1a1a1a",
-                borderLeft: isActive(n.h)
-                  ? "3px solid #c8a96e"
-                  : "3px solid transparent",
-                background: isActive(n.h)
-                  ? "rgba(200,169,110,0.06)"
-                  : "transparent",
-              }}
-            >
-              {n.l}
-            </Link>
-          ))}
 
-          <button
-            onClick={() => setCateringOpen(!cateringOpen)}
+      {/* ── MOBILE MENU DRAWER ───────────────────────── */}
+      <div className={`mobile-menu ${menuOpen ? "mobile-menu--open" : ""}`}>
+        {/* Home */}
+        <Link
+          href="/"
+          className={`mob-link ${isActive("/") ? "mob-link--active" : ""}`}
+        >
+          Home
+        </Link>
+
+        {/* About */}
+        <Link
+          href="/about-us"
+          className={`mob-link ${isActive("/about-us") ? "mob-link--active" : ""}`}
+        >
+          About Us
+        </Link>
+
+        {/* Menu */}
+        <Link
+          href="/menu"
+          className={`mob-link ${isActive("/menu") ? "mob-link--active" : ""}`}
+        >
+          Menu
+        </Link>
+
+        {/* Catering accordion */}
+        <button
+          className={`mob-link mob-accordion ${isCateringActive ? "mob-link--active" : ""}`}
+          onClick={() => setCateringOpen(!cateringOpen)}
+        >
+          <span>Catering</span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
             style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "15px 24px",
-              background: isCateringActive
-                ? "rgba(200,169,110,0.06)"
-                : "transparent",
-              border: "none",
-              borderBottom: "1px solid #1a1a1a",
-              borderLeft: isCateringActive
-                ? "3px solid #c8a96e"
-                : "3px solid transparent",
-              color: isCateringActive ? "#c8a96e" : "#fff",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-              cursor: "pointer",
+              transform: cateringOpen ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.25s",
+              flexShrink: 0,
             }}
           >
-            Catering
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              style={{
-                transform: cateringOpen ? "rotate(180deg)" : "none",
-                transition: "transform 0.2s",
-              }}
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
 
-          {cateringOpen && (
-            <div style={{ background: "#141414" }}>
-              {[
-                { l: "Private Catering", h: "/private-catering" },
+        {cateringOpen && (
+          <div className="mob-submenu">
+            {/* Private Catering sub-group */}
+            <button
+              className={`mob-sublink mob-accordion ${privateOpen ? "mob-sublink--open" : ""}`}
+              onClick={() => setPrivateOpen(!privateOpen)}
+            >
+              <span>▸ Private Catering</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                style={{
+                  transform: privateOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.2s",
+                }}
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            {privateOpen &&
+              [
                 { l: "Wedding Catering", h: "/wedding-catering-in-dubai" },
-                { l: "Birthday Party", h: "/birthday-party-catering-in-dubai" },
-                { l: "Yacht Party", h: "/yacht-party-catering" },
+                {
+                  l: "Birthday Party Catering",
+                  h: "/birthday-party-catering-in-dubai",
+                },
+                { l: "Yacht Party Catering", h: "/yacht-party-catering" },
                 {
                   l: "Special Occasion",
                   h: "/special-occasion-catering-in-dubai",
@@ -385,89 +362,77 @@ export default function Navbar() {
                   h: "/kids-party-catering-in-dubai",
                 },
                 { l: "Get Together", h: "/get-together" },
-                { l: "Corporate Catering", h: "/corporate-catering-in-dubai" },
-                { l: "Staff Catering", h: "/staff-catering" },
-                { l: "Business Party", h: "/business-party-catering" },
               ].map((n) => (
                 <Link
                   key={n.h}
                   href={n.h}
-                  style={{
-                    display: "block",
-                    padding: "11px 40px",
-                    color: isActive(n.h) ? "#c8a96e" : "#666",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: 1.5,
-                    textTransform: "uppercase",
-                    borderBottom: "1px solid #1a1a1a",
-                    borderLeft: isActive(n.h)
-                      ? "3px solid #c8a96e"
-                      : "3px solid transparent",
-                  }}
+                  className={`mob-deeplink ${isActive(n.h) ? "mob-link--active" : ""}`}
                 >
                   {n.l}
                 </Link>
               ))}
-            </div>
-          )}
 
+            {/* Corporate sub-group */}
+            <button
+              className={`mob-sublink mob-accordion ${corporateOpen ? "mob-sublink--open" : ""}`}
+              onClick={() => setCorporateOpen(!corporateOpen)}
+            >
+              <span>▸ Corporate Catering</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                style={{
+                  transform: corporateOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.2s",
+                }}
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            {corporateOpen &&
+              [
+                { l: "Staff Catering", h: "/staff-catering" },
+                { l: "Business Party Catering", h: "/business-party-catering" },
+              ].map((n) => (
+                <Link
+                  key={n.h}
+                  href={n.h}
+                  className={`mob-deeplink ${isActive(n.h) ? "mob-link--active" : ""}`}
+                >
+                  {n.l}
+                </Link>
+              ))}
+          </div>
+        )}
+
+        {/* Contact */}
+        <Link
+          href="/contact-us"
+          className={`mob-link ${isActive("/contact-us") ? "mob-link--active" : ""}`}
+        >
+          Contact Us
+        </Link>
+
+        {/* CTA */}
+        <div style={{ padding: "16px 20px 24px" }}>
           <Link
             href="/contact-us"
+            className="btn btn--gold"
             style={{
               display: "block",
-              padding: "15px 24px",
-              color: isActive("/contact-us") ? "#c8a96e" : "#fff",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-              borderBottom: "1px solid #1a1a1a",
-              borderLeft: isActive("/contact-us")
-                ? "3px solid #c8a96e"
-                : "3px solid transparent",
+              textAlign: "center",
+              justifyContent: "center",
+              width: "100%",
             }}
           >
-            Contact Us
+            Make a Reservation
           </Link>
-
-          <div style={{ padding: "20px 24px" }}>
-            <Link
-              href="/contact-us"
-              className="btn btn--gold"
-              style={{
-                display: "block",
-                textAlign: "center",
-                justifyContent: "center",
-              }}
-            >
-              Make a Reservation
-            </Link>
-          </div>
         </div>
-      )}
-
-      <style jsx>{`
-        @media (min-width: 1024px) {
-          .hidden {
-            display: none;
-          }
-          .lg\\:block {
-            display: block !important;
-          }
-          .lg\\:flex {
-            display: flex !important;
-          }
-        }
-        @media (max-width: 1023px) {
-          .lg\\:block {
-            display: none;
-          }
-          .lg\\:flex {
-            display: none !important;
-          }
-        }
-      `}</style>
+      </div>
     </nav>
   );
 }
